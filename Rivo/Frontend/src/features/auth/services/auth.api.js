@@ -1,18 +1,18 @@
 import axios from "axios";
-import { config } from "../../../config/config";
 
 const authApi = axios.create({
-    baseURL: `${config.baseURL}/api/auth`,
+    baseURL: `/api/auth`,
     withCredentials: true,
 });
 
-export const registerUser = async ({ name, email, password, contact }) => {
+export const registerUser = async ({ name, email, password, contact, isSeller }) => {
     try {
         const { data } = await authApi.post("/register", {
             name,
             email,
             password,
             contact,
+            isSeller
         });
         return data;
     } catch (error) {

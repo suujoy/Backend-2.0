@@ -8,7 +8,7 @@ export const useAuth = () => {
     const dispatch = useDispatch();
     const { user, loading, error } = useSelector((state) => state.auth);
 
-    const register = async ({ name, email, password, contact }) => {
+    const register = async ({ name, email, password, contact, isSeller }) => {
         try {
             dispatch(setLoading(true));
             dispatch(setError(null));
@@ -18,6 +18,7 @@ export const useAuth = () => {
                 email,
                 password,
                 contact,
+                isSeller
             });
             dispatch(setUser(user));
 
@@ -44,4 +45,6 @@ export const useAuth = () => {
             dispatch(setLoading(false));
         }
     };
+
+    return { register, login, user, loading, error };
 };
