@@ -196,6 +196,10 @@ const Login = () => {
                                 "Sign In"
                             )}
                         </button>
+
+                        {/* google login */}
+
+                        <a href="/api/auth/google">continue with google</a>
                     </form>
 
                     {/* Navigation Link to Register */}
