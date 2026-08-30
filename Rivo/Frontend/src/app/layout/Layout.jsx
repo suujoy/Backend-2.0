@@ -3,8 +3,10 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { Outlet, useLocation } from "react-router";
 import { useTheme } from "../theme/hooks/useTheme";
+import { useAuthInit } from "../../features/auth/hooks/useAuthInit";
 
 const Layout = () => {
+    useAuthInit();
     const { mode } = useTheme();
     const location = useLocation();
 

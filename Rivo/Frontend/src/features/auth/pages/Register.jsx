@@ -3,8 +3,27 @@ import { Link, useNavigate } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import Input from "../components/Input";
 
+const PasswordRequirement = ({ valid, text }) => {
+    return (
+        <div
+            className={`flex items-center gap-1 ${
+                valid
+                    ? "text-secondary"
+                    : "text-on-surface-variant/60"
+            }`}
+        >
+            <span className="material-symbols-outlined text-sm">
+                {valid ? "check_circle" : "radio_button_unchecked"}
+            </span>
+
+            <span>{text}</span>
+        </div>
+    );
+};
+
+
 const Register = () => {
-    const { register, loading, error: authError } = useAuth();
+    const { handleRegister, loading, error: authError } = useAuth();
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
@@ -12,12 +31,14 @@ const Register = () => {
         email: "",
         contact: "",
         password: "",
+        confirmPassword: "",
         isSeller: false,
     });
 
     const [errors, setErrors] = useState({});
     const [showPassword, setShowPassword] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -34,23 +55,36 @@ const Register = () => {
     const validateForm = () => {
         const newErrors = {};
         if (!formData.name.trim()) newErrors.name = "Full name is required";
-        
+
         if (!formData.email.trim()) {
             newErrors.email = "Email address is required";
         } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
             newErrors.email = "Please enter a valid email address";
         }
-        
+
         if (!formData.contact.trim()) {
             newErrors.contact = "Contact number is required";
         } else if (!/^\+?[\d\s-]{10,15}$/.test(formData.contact.trim())) {
-            newErrors.contact = "Please enter a valid contact number (10-15 digits)";
+            newErrors.contact =
+                "Please enter a valid contact number (10-15 digits)";
         }
-        
+
         if (!formData.password) {
             newErrors.password = "Password is required";
         } else if (formData.password.length < 6) {
-            newErrors.password = "Password must be at least 6 characters long";
+            newErrors.password = "Password must be at least 6 characters";
+        } else if (!/[A-Z]/.test(formData.password)) {
+            newErrors.password = "Password must contain a capital letter";
+        } else if (!/[0-9]/.test(formData.password)) {
+            newErrors.password = "Password must contain a number";
+        } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(formData.password)) {
+            newErrors.password = "Password must contain a special character";
+        }
+
+        if (!formData.confirmPassword) {
+            newErrors.confirmPassword = "Please confirm your password";
+        } else if (formData.password !== formData.confirmPassword) {
+            newErrors.confirmPassword = "Passwords do not match";
         }
 
         setErrors(newErrors);
@@ -62,7 +96,7 @@ const Register = () => {
         if (!validateForm()) return;
 
         try {
-            await register({
+            await handleRegister({
                 name: formData.name,
                 email: formData.email,
                 password: formData.password,
@@ -71,7 +105,7 @@ const Register = () => {
             });
             setSuccessMessage("Account created successfully! Redirecting...");
             setTimeout(() => {
-                navigate("/");
+                navigate("/dashboard");
             }, 2000);
         } catch (err) {
             console.error("Registration failed:", err);
@@ -89,11 +123,13 @@ const Register = () => {
                 />
                 {/* Dark overlay with soft warm/amber gradient tint for premium grocery feel */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-black/60 via-black/30 to-transparent"></div>
-                
+
                 {/* Content Overlay */}
                 <div className="absolute inset-x-0 bottom-0 p-8 xl:p-12 text-left z-10">
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-primary-fixed/90 text-on-primary-fixed mb-3 backdrop-blur-sm">
-                        <span className="material-symbols-outlined text-sm">workspace_premium</span>
+                        <span className="material-symbols-outlined text-sm">
+                            workspace_premium
+                        </span>
                         100% Organic & Fresh
                     </span>
                     <h1 className="text-3xl xl:text-4xl font-headline font-black text-white leading-tight drop-shadow-md">
@@ -101,7 +137,8 @@ const Register = () => {
                         to Your Table
                     </h1>
                     <p className="mt-2 text-white/80 font-body text-sm max-w-sm drop-shadow-sm">
-                        Experience the premium taste of naturally grown ingredients delivered directly to your doorstep.
+                        Experience the premium taste of naturally grown
+                        ingredients delivered directly to your doorstep.
                     </p>
                 </div>
             </div>
@@ -115,14 +152,17 @@ const Register = () => {
                             Create Account
                         </h2>
                         <p className="mt-1 text-on-surface-variant font-body text-xs">
-                            Join Rivo for fresh grocery delivery and premium experience
+                            Join Rivo for fresh grocery delivery and premium
+                            experience
                         </p>
                     </div>
 
                     {/* Success Message Banner */}
                     {successMessage && (
                         <div className="p-3 rounded-xl bg-secondary-container/30 text-secondary border border-secondary/20 font-body text-xs flex items-center gap-2 animate-pulse">
-                            <span className="material-symbols-outlined text-base">check_circle</span>
+                            <span className="material-symbols-outlined text-base">
+                                check_circle
+                            </span>
                             {successMessage}
                         </div>
                     )}
@@ -130,13 +170,19 @@ const Register = () => {
                     {/* General Auth Error Alert */}
                     {authError && (
                         <div className="p-3 rounded-xl bg-error-container/20 text-error border border-error/20 font-body text-xs flex items-center gap-2">
-                            <span className="material-symbols-outlined text-base font-bold">warning</span>
+                            <span className="material-symbols-outlined text-base font-bold">
+                                warning
+                            </span>
                             {authError}
                         </div>
                     )}
 
                     {/* Registration Form */}
-                    <form onSubmit={handleSubmit} className="space-y-3.5" noValidate>
+                    <form
+                        onSubmit={handleSubmit}
+                        className="space-y-3.5"
+                        noValidate
+                    >
                         {/* Name Field */}
                         <Input
                             type="text"
@@ -177,25 +223,89 @@ const Register = () => {
                         />
 
                         {/* Password Field */}
+                        <div className="space-y-2">
+                            <Input
+                                type={showPassword ? "text" : "password"}
+                                name="password"
+                                id="password"
+                                placeholder="Password"
+                                icon="lock"
+                                value={formData.password}
+                                onChange={handleChange}
+                                error={errors.password}
+                                disabled={loading}
+                                rightElement={
+                                    <button
+                                        type="button"
+                                        tabIndex="-1"
+                                        onClick={() =>
+                                            setShowPassword(!showPassword)
+                                        }
+                                        className="text-on-surface-variant/75 hover:text-primary-fixed focus:outline-none transition-colors"
+                                    >
+                                        <span className="material-symbols-outlined text-lg">
+                                            {showPassword
+                                                ? "visibility_off"
+                                                : "visibility"}
+                                        </span>
+                                    </button>
+                                }
+                            />
+
+                            {/* Password Requirements */}
+                            {formData.password && (
+                                <div className="grid grid-cols-2 gap-x-4 gap-y-1 px-1 text-[11px]">
+                                    <PasswordRequirement
+                                        valid={formData.password.length >= 6}
+                                        text="6+ characters"
+                                    />
+
+                                    <PasswordRequirement
+                                        valid={/[A-Z]/.test(formData.password)}
+                                        text="Capital letter"
+                                    />
+
+                                    <PasswordRequirement
+                                        valid={/[0-9]/.test(formData.password)}
+                                        text="Number"
+                                    />
+
+                                    <PasswordRequirement
+                                        valid={/[!@#$%^&*(),.?":{}|<>]/.test(
+                                            formData.password,
+                                        )}
+                                        text="Special character"
+                                    />
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Confirm Password Field */}
                         <Input
-                            type={showPassword ? "text" : "password"}
-                            name="password"
-                            id="password"
-                            placeholder="Password (min 6 chars)"
+                            type={showConfirmPassword ? "text" : "password"}
+                            name="confirmPassword"
+                            id="confirmPassword"
+                            placeholder="Confirm Password"
                             icon="lock"
-                            value={formData.password}
+                            value={formData.confirmPassword}
                             onChange={handleChange}
-                            error={errors.password}
+                            error={errors.confirmPassword}
                             disabled={loading}
                             rightElement={
                                 <button
                                     type="button"
                                     tabIndex="-1"
-                                    onClick={() => setShowPassword(!showPassword)}
+                                    onClick={() =>
+                                        setShowConfirmPassword(
+                                            !showConfirmPassword,
+                                        )
+                                    }
                                     className="text-on-surface-variant/75 hover:text-primary-fixed focus:outline-none transition-colors"
                                 >
                                     <span className="material-symbols-outlined text-lg">
-                                        {showPassword ? "visibility_off" : "visibility"}
+                                        {showConfirmPassword
+                                            ? "visibility_off"
+                                            : "visibility"}
                                     </span>
                                 </button>
                             }

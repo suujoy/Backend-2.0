@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router";
+
 import { useTheme } from "../../theme/hooks/useTheme";
 
 const Navbar = () => {
     const { mode, toggle } = useTheme();
     const location = useLocation();
+
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [profileOpen, setProfileOpen] = useState(false);
 
     const navLinks = [
         { name: "Home", path: "/" },
@@ -27,18 +30,18 @@ const Navbar = () => {
                     <span className="material-symbols-outlined text-primary-fixed text-3xl transition-transform duration-300 group-hover:scale-110">
                         eco
                     </span>
+
                     <span className="text-2xl font-display font-extrabold tracking-tight text-on-surface">
                         Rivo
                     </span>
                 </Link>
 
-                {/* Navigation Links (Desktop) */}
+                {/* Navigation Links */}
                 <div className="hidden md:flex items-center gap-8">
                     {navLinks.map((link) => (
                         <Link
                             key={link.name}
                             to={link.path}
-                            id={`nav-link-${link.name.toLowerCase()}`}
                             className={`font-body tracking-wide font-medium transition-all duration-300 active:scale-95 cursor-pointer ${
                                 isActive(link.path)
                                     ? "text-primary-fixed border-b-2 border-primary-fixed pb-1"
@@ -50,13 +53,12 @@ const Navbar = () => {
                     ))}
                 </div>
 
-                {/* Actions (Desktop) */}
-                <div className="hidden md:flex items-center gap-4">
+                {/* Desktop Actions */}
+                <div className="hidden md:flex items-center gap-3">
                     {/* Theme Toggle */}
                     <button
                         onClick={toggle}
                         aria-label="Toggle Theme"
-                        id="theme-toggle-btn"
                         className="p-2.5 text-on-surface-variant hover:text-primary-fixed hover:bg-surface-container-low rounded-xl transition-all duration-300 flex items-center justify-center"
                     >
                         <span className="material-symbols-outlined">
@@ -64,27 +66,44 @@ const Navbar = () => {
                         </span>
                     </button>
 
-                    {/* Login */}
-                    <Link
-                        to="/login"
-                        id="nav-login-btn"
-                        className="font-body font-medium text-on-surface-variant hover:text-primary-fixed transition-colors duration-300 active:scale-95"
-                    >
-                        Login
-                    </Link>
+                    {/* Profile */}
+                    <div className="relative">
+                        <button
+                            onClick={() => setProfileOpen(!profileOpen)}
+                            aria-label="Profile"
+                            className="p-2.5 text-on-surface-variant hover:text-primary-fixed hover:bg-surface-container-low rounded-xl transition-all duration-300 flex items-center justify-center"
+                        >
+                            <span className="material-symbols-outlined">
+                                account_circle
+                            </span>
+                        </button>
 
-                    {/* Register */}
-                    <Link
-                        to="/register"
-                        id="nav-register-btn"
-                        className="font-body font-semibold bg-primary-fixed text-on-primary-fixed px-6 py-2.5 rounded-xl hover:bg-primary-fixed-dim transition-colors duration-300 shadow-sm active:scale-95"
-                    >
-                        Register
-                    </Link>
+                        {/* Profile Dropdown */}
+                        {profileOpen && (
+                            <div className="absolute right-0 mt-3 w-44 bg-surface border border-outline-variant/20 rounded-xl shadow-lg p-2">
+                                <Link
+                                    to="/login"
+                                    onClick={() => setProfileOpen(false)}
+                                    className="block px-4 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-primary-fixed transition-colors"
+                                >
+                                    Login
+                                </Link>
+
+                                <Link
+                                    to="/register"
+                                    onClick={() => setProfileOpen(false)}
+                                    className="block px-4 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-primary-fixed transition-colors"
+                                >
+                                    Register
+                                </Link>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
-                {/* Mobile Menu Button */}
+                {/* Mobile Actions */}
                 <div className="md:hidden flex items-center gap-2">
+                    {/* Theme Toggle */}
                     <button
                         onClick={toggle}
                         aria-label="Toggle Theme"
@@ -94,6 +113,8 @@ const Navbar = () => {
                             {mode === "light" ? "dark_mode" : "light_mode"}
                         </span>
                     </button>
+
+                    {/* Mobile Menu */}
                     <button
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                         aria-label="Menu"
@@ -107,9 +128,9 @@ const Navbar = () => {
                 </div>
             </div>
 
-            {/* Mobile Menu Dropdown */}
+            {/* Mobile Menu */}
             {mobileMenuOpen && (
-                <div className="md:hidden bg-surface border-t border-outline-variant/20 animate-in">
+                <div className="md:hidden bg-surface border-t border-outline-variant/20">
                     <div className="px-6 py-4 space-y-3">
                         {navLinks.map((link) => (
                             <Link
@@ -125,18 +146,21 @@ const Navbar = () => {
                                 {link.name}
                             </Link>
                         ))}
+
                         <hr className="border-outline-variant/30" />
+
                         <Link
                             to="/login"
                             onClick={() => setMobileMenuOpen(false)}
-                            className="block font-body font-medium text-on-surface-variant hover:text-primary-fixed py-2 transition-colors duration-300"
+                            className="block font-body font-medium text-on-surface-variant hover:text-primary-fixed py-2"
                         >
                             Login
                         </Link>
+
                         <Link
                             to="/register"
                             onClick={() => setMobileMenuOpen(false)}
-                            className="block font-body font-semibold bg-primary-fixed text-on-primary-fixed px-6 py-2.5 rounded-xl text-center hover:bg-primary-fixed-dim transition-colors duration-300 shadow-sm"
+                            className="block font-body font-semibold bg-primary-fixed text-on-primary-fixed px-6 py-2.5 rounded-xl text-center hover:bg-primary-fixed-dim transition-colors"
                         >
                             Register
                         </Link>

@@ -4,7 +4,7 @@ import { useAuth } from "../hooks/useAuth";
 import Input from "../components/Input";
 
 const Login = () => {
-    const { login, loading, error: authError } = useAuth();
+    const { handleLogin, loading, error: authError } = useAuth();
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
@@ -45,13 +45,13 @@ const Login = () => {
         if (!validateForm()) return;
 
         try {
-            await login({
+            await handleLogin({
                 identifier: formData.identifier,
                 password: formData.password,
             });
             setSuccessMessage("Login successful! Welcome back.");
             setTimeout(() => {
-                navigate("/");
+                navigate("/dashboard");
             }, 2000);
         } catch (err) {
             console.error("Login failed:", err);
@@ -69,11 +69,13 @@ const Login = () => {
                 />
                 {/* Dark overlay with soft warm/amber gradient tint for premium grocery feel */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-black/60 via-black/30 to-transparent"></div>
-                
+
                 {/* Content Overlay */}
                 <div className="absolute inset-x-0 bottom-0 p-8 xl:p-12 text-left z-10">
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-primary-fixed/90 text-on-primary-fixed mb-3 backdrop-blur-sm">
-                        <span className="material-symbols-outlined text-sm">local_shipping</span>
+                        <span className="material-symbols-outlined text-sm">
+                            local_shipping
+                        </span>
                         Fast Delivery & Quality Guaranteed
                     </span>
                     <h1 className="text-3xl xl:text-4xl font-headline font-black text-white leading-tight drop-shadow-md">
@@ -81,7 +83,8 @@ const Login = () => {
                         Rivo Grocery
                     </h1>
                     <p className="mt-2 text-white/80 font-body text-sm max-w-sm drop-shadow-sm">
-                        Login to access your personalized dashboard, track orders, and grab exclusive member discounts.
+                        Login to access your personalized dashboard, track
+                        orders, and grab exclusive member discounts.
                     </p>
                 </div>
             </div>
@@ -102,7 +105,9 @@ const Login = () => {
                     {/* Success Message Banner */}
                     {successMessage && (
                         <div className="p-3 rounded-xl bg-secondary-container/30 text-secondary border border-secondary/20 font-body text-xs flex items-center gap-2 animate-pulse">
-                            <span className="material-symbols-outlined text-base">check_circle</span>
+                            <span className="material-symbols-outlined text-base">
+                                check_circle
+                            </span>
                             {successMessage}
                         </div>
                     )}
@@ -110,13 +115,19 @@ const Login = () => {
                     {/* General Auth Error Alert */}
                     {authError && (
                         <div className="p-3 rounded-xl bg-error-container/20 text-error border border-error/20 font-body text-xs flex items-center gap-2">
-                            <span className="material-symbols-outlined text-base font-bold">warning</span>
+                            <span className="material-symbols-outlined text-base font-bold">
+                                warning
+                            </span>
                             {authError}
                         </div>
                     )}
 
                     {/* Login Form */}
-                    <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+                    <form
+                        onSubmit={handleSubmit}
+                        className="space-y-4"
+                        noValidate
+                    >
                         {/* Identifier Field */}
                         <Input
                             type="text"
@@ -133,7 +144,10 @@ const Login = () => {
                         {/* Password Field */}
                         <div className="space-y-1">
                             <div className="flex justify-end items-center px-1">
-                                <a href="#forgot" className="text-xs font-semibold text-primary-fixed hover:text-primary-fixed-dim transition-colors">
+                                <a
+                                    href="#forgot"
+                                    className="text-xs font-semibold text-primary-fixed hover:text-primary-fixed-dim transition-colors"
+                                >
                                     Forgot Password?
                                 </a>
                             </div>
@@ -151,11 +165,15 @@ const Login = () => {
                                     <button
                                         type="button"
                                         tabIndex="-1"
-                                        onClick={() => setShowPassword(!showPassword)}
+                                        onClick={() =>
+                                            setShowPassword(!showPassword)
+                                        }
                                         className="text-on-surface-variant/75 hover:text-primary-fixed focus:outline-none transition-colors"
                                     >
                                         <span className="material-symbols-outlined text-lg">
-                                            {showPassword ? "visibility_off" : "visibility"}
+                                            {showPassword
+                                                ? "visibility_off"
+                                                : "visibility"}
                                         </span>
                                     </button>
                                 }

@@ -5,29 +5,32 @@ const authApi = axios.create({
     withCredentials: true,
 });
 
-export const registerUser = async ({ name, email, password, contact, isSeller }) => {
-    try {
-        const { data } = await authApi.post("/register", {
-            name,
-            email,
-            password,
-            contact,
-            isSeller
-        });
-        return data;
-    } catch (error) {
-        console.error("Error registering user:", error);
-    }
+export const registerUser = async ({
+    name,
+    email,
+    password,
+    contact,
+    isSeller,
+}) => {
+    const { data } = await authApi.post("/register", {
+        name,
+        email,
+        password,
+        contact,
+        isSeller,
+    });
+    return data;
 };
 
 export const loginUser = async ({ identifier, password }) => {
-    try {
-        const { data } = await authApi.post("/login", {
-            identifier,
-            password,
-        });
-        return data;
-    } catch (error) {
-        console.error("Error logging in the user:", error);
-    }
+    const { data } = await authApi.post("/login", {
+        identifier,
+        password,
+    });
+    return data;
+};
+
+export const getMe = async () => {
+    const { data } = await authApi.get("/me");
+    return data;
 };

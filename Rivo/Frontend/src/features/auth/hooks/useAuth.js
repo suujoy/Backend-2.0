@@ -2,49 +2,76 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { setUser, setLoading, setError } from "../state/auth.slice.js";
 
-import { loginUser, registerUser } from "../services/auth.api";
+import { loginUser, registerUser, getMe } from "../services/auth.api";
 
 export const useAuth = () => {
     const dispatch = useDispatch();
     const { user, loading, error } = useSelector((state) => state.auth);
 
-    const register = async ({ name, email, password, contact, isSeller }) => {
+    const handleRegister = async ({
+        name,
+        email,
+        password,
+        contact,
+        isSeller,
+    }) => {
         try {
             dispatch(setLoading(true));
             dispatch(setError(null));
 
-            const { user } = await registerUser({
+            const data = await registerUser({
                 name,
                 email,
                 password,
                 contact,
-                isSeller
+                isSeller,
             });
+            const user = data?.user || null;
             dispatch(setUser(user));
 
             return user;
         } catch (error) {
-            dispatch(setError(error.message));
+            const message = error.response?.data?.message || error.message;
+            dispatch(setError(message));
             throw error;
         } finally {
             dispatch(setLoading(false));
         }
     };
 
-    const login = async ({ identifier, password }) => {
+    const handleLogin = async ({ identifier, password }) => {
         try {
             dispatch(setLoading(true));
             dispatch(setError(null));
-            const { user } = await loginUser({ identifier, password });
+            const data = await loginUser({ identifier, password });
+            const user = data?.user || null;
             dispatch(setUser(user));
             return user;
         } catch (error) {
-            dispatch(setError(error.message));
+            const message = error.response?.data?.message || error.message;
+            dispatch(setError(message));
             throw error;
         } finally {
             dispatch(setLoading(false));
         }
     };
 
-    return { register, login, user, loading, error };
+    const handleGetMe = async () => {
+        try {
+            dispatch(setLoading(true));
+            dispatch(setError(null));
+            const data = await getMe();
+            const user = data?.user || null;
+            dispatch(setUser(user));
+            return user;
+        } catch (error) {
+            dispatch(setUser(null));
+            const message = error.response?.data?.message || error.message;
+            dispatch(setError(message));
+        } finally {
+            dispatch(setLoading(false));
+        }
+    };
+
+    return { handleRegister, handleLogin, handleGetMe, user, loading, error };
 };
