@@ -20,10 +20,21 @@ if (!process.env.NODE_ENVIRONMENT) {
     throw new Error("NODE_ENVIRONMENT is not defined");
 }
 
+// Google OAuth
+if (!process.env.GOOGLE_CLIENT_ID) {
+    throw new Error("GOOGLE_CLIENT_ID is not defined");
+}
+
+if (!process.env.GOOGLE_CLIENT_SECRET) {
+    throw new Error("GOOGLE_CLIENT_SECRET is not defined");
+}
+
 export const config = {
     PORT: process.env.PORT,
     MONGO_URI: process.env.MONGO_URI,
     JWT_SECRET: process.env.JWT_SECRET,
     JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || "1h",
     NODE_ENVIRONMENT: process.env.NODE_ENVIRONMENT,
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
 };

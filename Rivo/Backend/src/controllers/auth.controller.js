@@ -114,3 +114,18 @@ export const getMeUser = async (req, res, next) => {
         next(error);
     }
 };
+
+export const googleCallback = async (req, res, next) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({
+                success: false,
+                message: "Google authentication failed",
+            });
+        }
+
+        sendTokenResponse(req.user, "User logged in successfully", res, 200);
+    } catch (error) {
+        next(error);
+    }
+};
